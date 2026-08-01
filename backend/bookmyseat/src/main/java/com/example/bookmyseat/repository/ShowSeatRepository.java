@@ -1,5 +1,6 @@
 package com.example.bookmyseat.repository;
 
+import com.example.bookmyseat.dto.ShowSeatDto;
 import com.example.bookmyseat.entity.*;
 import com.example.bookmyseat.enums.*;
 import jakarta.persistence.LockModeType;
@@ -24,9 +25,25 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeat, UUID> {
     List<ShowSeat> findByShowIdAndSeatIdIn(UUID showId, List<UUID> seatIds);
 
     // INTERVIEW TALKING POINT: Pessimistic Locking
-    // Even though we use Redis for tentative holds, using a DB-level Pessimistic Write Lock
+    // Even though we use Redis for tentative holds, using a DB-level Pessimistic
+    // Write Lock
     // during the final payment confirmation ensures absolute ACID integrity.
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT ss FROM ShowSeat ss WHERE ss.id IN :ids")
     List<ShowSeat> findByIdsWithPessimisticLock(@Param("ids") List<UUID> ids);
+
+    @Query("""
+            SELECT new com.example.bookmyseat.dto.ShowSeatDto(
+                ss.id,
+                s.seatRow,
+                s.seatNumber,
+                s.seatType,
+                ss.price,
+                ss.status
+            )
+            FROM ShowSeat ss
+            JOIN ss.seat s
+            WHERE ss.show.id = :showId
+            """)
+    List<ShowSeatDto> getSeatLayout(UUID showId);
 }

@@ -31,10 +31,10 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
     const d = new Date(); d.setDate(d.getDate() + i)
     // Adjust for local timezone to ensure YYYY-MM-DD matches local date
     const offset = d.getTimezoneOffset()
-    const localD = new Date(d.getTime() - (offset*60*1000))
-    return { 
-      short: d.toLocaleDateString('en-US', { weekday: 'short' }), 
-      day: d.getDate(), 
+    const localD = new Date(d.getTime() - (offset * 60 * 1000))
+    return {
+      short: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      day: d.getDate(),
       month: d.toLocaleDateString('en-US', { month: 'short' }),
       fullDateStr: localD.toISOString().split('T')[0]
     }
@@ -60,7 +60,7 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
     }
     theatersMap[show.theaterId].shows.push(show);
   });
-  
+
   const theatersWithShows = Object.values(theatersMap);
   const selectedTheaterObj = theatersWithShows.find(t => t.id === selectedCinema);
 
@@ -127,7 +127,7 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
           {/* Booking Panel */}
           <div className="col-span-3 pt-24">
             <div className="sticky top-24 rounded-2xl p-5" style={{ background: '#13131f', border: '1px solid rgba(255,255,255,0.08)' }}>
-              
+
               {/* Date Selector */}
               <h4 className="text-xs font-mono-dm tracking-widest uppercase mb-3" style={{ color: '#555570' }}>Select Date</h4>
               <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
@@ -183,10 +183,10 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
               )}
 
               <button
-                onClick={() => { 
+                onClick={() => {
                   if (selectedTime) {
                     if (setSelectedShowId) setSelectedShowId(selectedTime);
-                    setPage('seats') 
+                    setPage('seats')
                   }
                 }}
                 className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-95 mt-4"

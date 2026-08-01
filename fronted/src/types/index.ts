@@ -21,7 +21,7 @@ export interface SeatItem {
   id: string
   row: string
   num: number
-  type: 'standard' | 'premium' | 'recliner'
+  type: 'REGULAR' | 'PREMIUM' | 'RECLINER'
   status: 'available' | 'taken' | 'selected'
   price?: number
 }

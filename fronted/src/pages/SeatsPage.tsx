@@ -29,9 +29,9 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
             id: s.showSeatId,
             row: s.seatRow,
             num: s.seatNumber,
-            type: s.seatType?.toLowerCase() === 'premium' ? 'premium' 
-                : s.seatType?.toLowerCase() === 'recliner' ? 'recliner' 
-                : 'standard',
+            type: s.seatType?.toUpperCase() === 'PREMIUM' ? 'PREMIUM'
+              : s.seatType?.toUpperCase() === 'RECLINER' ? 'RECLINER'
+                : 'REGULAR',
             status: s.status?.toLowerCase() === 'available' ? 'available' : 'taken',
             price: s.price
           }))
@@ -64,8 +64,8 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
   // Dynamically compute rows from the fetched seats, fallback to standard rows if empty
   const dynamicRows = Array.from(new Set(seats.map(s => s.row))).sort();
   const rows = dynamicRows.length > 0 ? dynamicRows : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-  
-  const typePrice: Record<string, number> = { recliner: 5, premium: 3, standard: 0 } // Fallback if backend doesn't provide price
+
+  const typePrice: Record<string, number> = { RECLINER: 5, PREMIUM: 3, REGULAR: 0 } // Fallback if backend doesn't provide price
 
   // Sum up prices of selected seats. Use backend price if available, else fallback logic
   const totalPrice = selected.reduce((acc, id) => {
@@ -115,18 +115,18 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
                             ? '#1e1e2e'
                             : seat.status === 'selected'
                               ? '#d4a63a'
-                              : seat.type === 'recliner'
+                              : seat.type === 'RECLINER'
                                 ? '#1a2a3a'
-                                : seat.type === 'premium'
+                                : seat.type === 'PREMIUM'
                                   ? '#1a1a35'
                                   : '#1a1a25'
                           const border = seat.status === 'taken'
                             ? '1px solid #2a2a3a'
                             : seat.status === 'selected'
                               ? '1px solid #f0c060'
-                              : seat.type === 'recliner'
+                              : seat.type === 'RECLINER'
                                 ? '1px solid rgba(100,180,255,0.25)'
-                                : seat.type === 'premium'
+                                : seat.type === 'PREMIUM'
                                   ? '1px solid rgba(150,100,255,0.25)'
                                   : '1px solid rgba(255,255,255,0.08)'
                           return (
@@ -143,7 +143,7 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
                           )
                         })}
                       </div>
-                      <span className="w-16 text-right text-xs font-mono-dm" style={{ color: type === 'recliner' ? 'rgba(100,180,255,0.7)' : type === 'premium' ? 'rgba(150,100,255,0.7)' : '#555570' }}>
+                      <span className="w-16 text-right text-xs font-mono-dm" style={{ color: type === 'RECLINER' ? 'rgba(100,180,255,0.7)' : type === 'PREMIUM' ? 'rgba(150,100,255,0.7)' : '#555570' }}>
                         {type}
                       </span>
                     </div>

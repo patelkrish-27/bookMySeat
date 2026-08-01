@@ -14,7 +14,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "movies")
+@Table(name = "movies", indexes = {
+    @Index(name = "idx_movies_release_date", columnList = "release_date"),
+    @Index(name = "idx_movies_title", columnList = "title")
+})
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

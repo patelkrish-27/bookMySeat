@@ -17,7 +17,9 @@ import com.example.bookmyseat.enums.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "payments")
+@Table(name = "payments", indexes = {
+    @Index(name = "idx_payments_booking_id", columnList = "booking_id")
+})
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

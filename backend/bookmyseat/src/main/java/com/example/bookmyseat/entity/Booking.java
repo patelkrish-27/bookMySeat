@@ -18,7 +18,10 @@ import com.example.bookmyseat.enums.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "bookings")
+@Table(name = "bookings", indexes = {
+    @Index(name = "idx_bookings_user_id_created_at", columnList = "user_id, created_at DESC"),
+    @Index(name = "idx_bookings_show_id", columnList = "show_id")
+})
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,7 +50,10 @@ public class Booking {
     @JoinTable(
         name = "booking_seats",
         joinColumns = @JoinColumn(name = "booking_id"),
-        inverseJoinColumns = @JoinColumn(name = "show_seat_id")
+        inverseJoinColumns = @JoinColumn(name = "show_seat_id"),
+        indexes = {
+            @Index(name = "idx_booking_seats_show_seat_id", columnList = "show_seat_id")
+        }
     )
     private List<ShowSeat> seats;
 }

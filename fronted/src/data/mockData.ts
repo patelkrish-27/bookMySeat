@@ -63,9 +63,9 @@ export function generateSeats(): SeatItem[] {
     const count = 10
     for (let n = 1; n <= count; n++) {
       const sid = `${row}${n}`
-      let type: SeatItem['type'] = 'standard'
-      if (ri <= 1) type = 'recliner'
-      else if (ri <= 3) type = 'premium'
+      let type: SeatItem['type'] = 'REGULAR'
+      if (ri <= 1) type = 'RECLINER'
+      else if (ri <= 3) type = 'PREMIUM'
       seats.push({ id: sid, row, num: n, type, status: takenSeats.has(sid) ? 'taken' : 'available' })
     }
   })

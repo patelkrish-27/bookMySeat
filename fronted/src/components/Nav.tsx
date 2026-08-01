@@ -72,15 +72,6 @@ export function Nav({ page, setPage, onSearch }: {
             </button>
           </div>
 
-          {/* Book Tickets CTA */}
-          <button
-            onClick={() => setPage('listing')}
-            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}
-          >
-            Book Tickets
-          </button>
-
           {/* Avatar */}
           <button onClick={() => setPage('profile')} className="w-9 h-9 rounded-full overflow-hidden border-2 hover:border-yellow-400 transition-colors" style={{ borderColor: 'rgba(212,166,58,0.4)' }}>
             <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&auto=format" alt="User" className="w-full h-full object-cover" />

@@ -59,13 +59,6 @@ public class SearchService {
     }
 
     public List<ShowSeatDto> getSeatingLayout(UUID showId) {
-        return showSeatRepository.findByShowId(showId).stream().map(showSeat -> ShowSeatDto.builder()
-                .showSeatId(showSeat.getId())
-                .seatRow(showSeat.getSeat().getSeatRow())
-                .seatNumber(showSeat.getSeat().getSeatNumber())
-                .seatType(showSeat.getSeat().getSeatType())
-                .price(showSeat.getPrice())
-                .status(showSeat.getStatus())
-                .build()).collect(Collectors.toList());
+        return showSeatRepository.getSeatLayout(showId);
     }
 }

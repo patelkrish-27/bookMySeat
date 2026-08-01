@@ -17,6 +17,9 @@ import com.example.bookmyseat.enums.*;
 @Entity
 @Table(name = "show_seats", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"show_id", "seat_id"})
+}, indexes = {
+    @Index(name = "idx_show_seats_show_id_status", columnList = "show_id, status"),
+    @Index(name = "idx_show_seats_seat_id", columnList = "seat_id")
 })
 public class ShowSeat {
     @Id

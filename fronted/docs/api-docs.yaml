@@ -1,0 +1,162 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/v1/search/theaters:
+    get:
+      tags:
+      - search-controller
+      operationId: getTheaters
+      parameters:
+      - name: city
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TheaterDto"
+  /api/v1/search/shows/{showId}/seats:
+    get:
+      tags:
+      - search-controller
+      operationId: getShowSeats
+      parameters:
+      - name: showId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShowSeatDto"
+  /api/v1/search/movies:
+    get:
+      tags:
+      - search-controller
+      operationId: getMovies
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieDto"
+  /api/v1/search/movies/{movieId}/shows:
+    get:
+      tags:
+      - search-controller
+      operationId: getShowsByMovie
+      parameters:
+      - name: movieId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShowDto"
+components:
+  schemas:
+    TheaterDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+    ShowSeatDto:
+      type: object
+      properties:
+        showSeatId:
+          type: string
+          format: uuid
+        seatRow:
+          type: string
+        seatNumber:
+          type: integer
+          format: int32
+        seatType:
+          type: string
+          enum:
+          - REGULAR
+          - PREMIUM
+          - RECLINER
+        price:
+          type: number
+        status:
+          type: string
+          enum:
+          - AVAILABLE
+          - LOCKED
+          - BOOKED
+    MovieDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        durationMins:
+          type: integer
+          format: int32
+        language:
+          type: string
+    ShowDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        movieId:
+          type: string
+          format: uuid
+        movieTitle:
+          type: string
+        theaterId:
+          type: string
+          format: uuid
+        theaterName:
+          type: string
+        screenName:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time

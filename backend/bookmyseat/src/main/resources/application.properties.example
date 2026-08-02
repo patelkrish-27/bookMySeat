@@ -1,0 +1,64 @@
+# ── Copy this file to application.properties and fill in every <placeholder> ──
+# Never commit application.properties — it is listed in .gitignore.
+
+spring.application.name=bookmyseat
+
+# ── Database (Supabase / any Postgres) ────────────────────────────────────────
+# Supabase: Project Settings → Database → Connection string (Transaction mode, port 6543)
+# Append ?prepareThreshold=0 when using PgBouncer (Supabase pooler).
+spring.datasource.url=jdbc:postgresql://<SUPABASE_HOST>:6543/postgres?prepareThreshold=0
+spring.datasource.username=<SUPABASE_DB_USER>
+spring.datasource.password=<SUPABASE_DB_PASSWORD>
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Hibernate — use "update" locally, "validate" in production.
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# ── Swagger UI ────────────────────────────────────────────────────────────────
+springdoc.swagger-ui.path=/docs
+
+# ── Server compression ────────────────────────────────────────────────────────
+server.compression.enabled=true
+server.compression.mime-types=application/json,text/html,text/xml,text/plain,text/css,application/javascript
+server.compression.min-response-size=1024
+
+# ── JWT ───────────────────────────────────────────────────────────────────────
+# Generate a secret with: openssl rand -base64 32
+jwt.secret=<YOUR_BASE64_JWT_SECRET>
+# Token lifetime in milliseconds (3600000 = 1 h, 86400000 = 24 h)
+jwt.expiration-ms=3600000
+
+# ── Email (Gmail SMTP) ────────────────────────────────────────────────────────
+# Use a 16-character Google App Password — NOT your real Gmail password.
+# Google Account → Security → 2-Step Verification → App Passwords → Generate.
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=<YOUR_GMAIL_ADDRESS>
+spring.mail.password=<YOUR_GMAIL_APP_PASSWORD>
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+# ── Redis (seat locking) ──────────────────────────────────────────────────────
+# Local dev: leave host=localhost, port=6379, comment out password.
+# Production (Upstash): copy host and port from Upstash console.
+spring.data.redis.host=<REDIS_HOST>
+spring.data.redis.port=<REDIS_PORT>
+# Uncomment and set when Redis requires a password (Upstash always does):
+# spring.data.redis.password=<REDIS_PASSWORD>
+# Upstash uses TLS — uncomment the lines below for Upstash:
+# spring.data.redis.ssl.enabled=true
+
+# ── Razorpay ──────────────────────────────────────────────────────────────────
+# Test keys:  https://dashboard.razorpay.com → Settings → API Keys → Test mode
+# Live keys:  same page, switch to Live mode (requires KYC)
+razorpay.key-id=<RAZORPAY_KEY_ID>
+razorpay.key-secret=<RAZORPAY_KEY_SECRET>
+
+# ── Admin bootstrap ───────────────────────────────────────────────────────────
+# An ADMIN account is created on first startup if this email doesn't exist.
+# Change these before deploying — especially the password.
+app.admin.email=admin@yourdomain.com
+app.admin.password=<STRONG_ADMIN_PASSWORD>
+app.admin.name=Admin

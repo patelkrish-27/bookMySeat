@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>Booking Confirmed — BookMySeat</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background-color: #07070f;
+      color: #f0f0f8;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    .wrapper {
+      width: 100%;
+      background-color: #07070f;
+      padding: 40px 16px;
+    }
+
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* ── Logo header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #d4a63a, #f0c060);
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: #f0f0f8;
+      letter-spacing: -0.3px;
+    }
+    .logo-text span { color: #d4a63a; }
+
+    /* ── Success badge ── */
+    .success-badge {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .checkmark-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(212,166,58,0.15), rgba(240,192,96,0.08));
+      border: 2px solid rgba(212,166,58,0.35);
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .success-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #f0f0f8;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    .success-sub {
+      font-size: 14px;
+      color: #9999bb;
+    }
+
+    /* ── Ticket card ── */
+    .ticket {
+      background: #13131f;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 24px;
+    }
+
+    /* movie section */
+    .ticket-top {
+      padding: 28px 28px 24px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #13131f 100%);
+      position: relative;
+    }
+    .movie-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .poster-thumb {
+      width: 70px;
+      height: 98px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgba(212,166,58,0.2);
+      flex-shrink: 0;
+    }
+    .poster-placeholder {
+      width: 70px;
+      height: 98px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e1e35, #2a2a45);
+      border: 1px solid rgba(212,166,58,0.2);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .movie-meta { flex: 1; padding-top: 4px; }
+    .booking-id-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #d4a63a;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .booking-id {
+      font-size: 20px;
+      font-weight: 800;
+      color: #f0f0f8;
+      font-family: 'Courier New', monospace;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .movie-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f0f0f8;
+      line-height: 1.3;
+    }
+
+    /* detail grid */
+    .detail-grid {
+      display: table;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 2px;
+    }
+    .detail-row {
+      display: table-row;
+    }
+    .detail-cell {
+      display: table-cell;
+      width: 50%;
+      padding-bottom: 14px;
+      vertical-align: top;
+    }
+    .detail-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #555570;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 3px;
+    }
+    .detail-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f0f8;
+      line-height: 1.4;
+    }
+
+    /* tear line */
+    .tear-line {
+      display: flex;
+      align-items: center;
+      padding: 0 0;
+      position: relative;
+      overflow: visible;
+    }
+    .tear-notch-left {
+      width: 22px;
+      height: 22px;
+      background: #07070f;
+      border-radius: 50%;
+      margin-left: -11px;
+      flex-shrink: 0;
+    }
+    .tear-dash {
+      flex: 1;
+      border: none;
+      border-top: 2px dashed rgba(255,255,255,0.1);
+      margin: 0 6px;
+    }
+    .tear-notch-right {
+      width: 22px;
+      height: 22px;
+      background: #07070f;
+      border-radius: 50%;
+      margin-right: -11px;
+      flex-shrink: 0;
+    }
+
+    /* bottom section */
+    .ticket-bottom {
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .amount-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #555570;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .amount-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: #d4a63a;
+      font-family: 'Courier New', monospace;
+      letter-spacing: -0.5px;
+    }
+    .status-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(74,222,128,0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.25);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* QR / barcode placeholder */
+    .qr-box {
+      width: 88px;
+      height: 88px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .qr-row {
+      display: flex;
+      gap: 2px;
+    }
+    .qr-cell {
+      border-radius: 1px;
+    }
+
+    /* seats pill row */
+    .seats-section {
+      padding: 0 28px 20px;
+    }
+    .seats-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #555570;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .seat-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .seat-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.3px;
+    }
+    .seat-pill-regular {
+      background: rgba(153,153,187,0.12);
+      color: #9999bb;
+      border: 1px solid rgba(153,153,187,0.2);
+    }
+    .seat-pill-premium {
+      background: rgba(147,143,252,0.12);
+      color: #938ffc;
+      border: 1px solid rgba(147,143,252,0.25);
+    }
+    .seat-pill-recliner {
+      background: rgba(100,184,255,0.12);
+      color: #64b8ff;
+      border: 1px solid rgba(100,184,255,0.25);
+    }
+
+    /* ── Info strip ── */
+    .info-strip {
+      background: rgba(212,166,58,0.07);
+      border: 1px solid rgba(212,166,58,0.18);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #d4a63a;
+      line-height: 1.6;
+    }
+    .info-strip strong { font-weight: 700; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding-top: 8px;
+    }
+    .footer p {
+      font-size: 12px;
+      color: #555570;
+      line-height: 1.8;
+    }
+    .footer a {
+      color: #d4a63a;
+      text-decoration: none;
+    }
+    .footer .divider {
+      margin: 16px 0;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="header">
+      <div class="logo-box">
+        <div class="logo-icon">
+          <!-- film-strip icon -->
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 3h2v2H2V3zm3 0h2v2H5V3zm3 0h2v2H8V3zm3 0h2v2h-2V3zM2 11h2v2H2v-2zm9 0h2v2h-2v-2zM1 5h14v6H1V5z" fill="#07070f"/>
+          </svg>
+        </div>
+        <span class="logo-text">BookMy<span>Seat</span></span>
+      </div>
+    </div>
+
+    <!-- Success badge -->
+    <div class="success-badge">
+      <div class="checkmark-circle">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#d4a63a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+      </div>
+      <div class="success-title">Booking Confirmed! 🎬</div>
+      <div class="success-sub">Your tickets are ready. See you at the movies, <span th:text="${userName}">there</span>!</div>
+    </div>
+
+    <!-- Ticket -->
+    <div class="ticket">
+
+      <!-- Movie details -->
+      <div class="ticket-top">
+
+        <div class="movie-header">
+          <!-- Poster (show if available, fallback to placeholder) -->
+          <th:block th:if="${posterUrl != null and !#strings.isEmpty(posterUrl)}">
+            <img th:src="${posterUrl}" class="poster-thumb" alt="Movie Poster"/>
+          </th:block>
+          <th:block th:unless="${posterUrl != null and !#strings.isEmpty(posterUrl)}">
+            <div class="poster-placeholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(212,166,58,0.4)" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="m8 21 4-4 4 4M3 8h18"/>
+              </svg>
+            </div>
+          </th:block>
+
+          <div class="movie-meta">
+            <div class="booking-id-label">Booking ID</div>
+            <div class="booking-id" th:text="'#BMS-' + ${shortBookingId}">#BMS-XXXXXXXX</div>
+            <div class="movie-title" th:text="${movieTitle}">Movie Title</div>
+          </div>
+        </div>
+
+        <!-- Detail grid -->
+        <div class="detail-grid">
+          <div class="detail-row">
+            <div class="detail-cell">
+              <div class="detail-label">Cinema</div>
+              <div class="detail-value" th:text="${theaterName}">—</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-label">City</div>
+              <div class="detail-value" th:text="${theaterCity}">—</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-cell">
+              <div class="detail-label">Date</div>
+              <div class="detail-value" th:text="${showDate}">—</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-label">Time</div>
+              <div class="detail-value" th:text="${showTime}">—</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-cell">
+              <div class="detail-label">Screen</div>
+              <div class="detail-value" th:text="${screenName}">—</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-label">Seat Count</div>
+              <div class="detail-value" th:text="${seatCount} + ' seat(s)'">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seat pills row -->
+      <div class="seats-section">
+        <div class="seats-label">Your Seats</div>
+        <div class="seat-pills">
+          <th:block th:each="seat : ${seats}">
+            <span th:classappend="${seat.seatType == 'PREMIUM'} ? 'seat-pill seat-pill-premium' : (${seat.seatType == 'RECLINER'} ? 'seat-pill seat-pill-recliner' : 'seat-pill seat-pill-regular')"
+                  th:text="${seat.label}">A1</span>
+          </th:block>
+        </div>
+      </div>
+
+      <!-- Tear line -->
+      <div class="tear-line">
+        <div class="tear-notch-left"></div>
+        <hr class="tear-dash"/>
+        <div class="tear-notch-right"></div>
+      </div>
+
+      <!-- Amount + QR -->
+      <div class="ticket-bottom">
+        <div>
+          <div class="amount-label">Amount Paid</div>
+          <div class="amount-value" th:text="'₹' + ${totalAmount}">₹0.00</div>
+          <div class="status-badge">✓ CONFIRMED</div>
+        </div>
+
+        <!-- Decorative QR-like pattern (pure CSS, no external image) -->
+        <div class="qr-box">
+          <!-- Corner block TL -->
+          <div style="display:flex;flex-direction:column;gap:2px;width:72px;">
+            <div class="qr-row">
+              <div class="qr-cell" style="width:18px;height:18px;background:#000;border-radius:2px;"></div>
+              <div style="flex:1;"></div>
+              <div class="qr-cell" style="width:6px;height:18px;background:#000;"></div>
+              <div style="width:2px;"></div>
+              <div class="qr-cell" style="width:6px;height:18px;background:#000;"></div>
+              <div style="flex:1;"></div>
+              <div class="qr-cell" style="width:18px;height:18px;background:#000;border-radius:2px;"></div>
+            </div>
+            <div class="qr-row" style="justify-content:space-between;">
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:10px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+            </div>
+            <div class="qr-row" style="justify-content:space-between;">
+              <div class="qr-cell" style="width:10px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:10px;height:6px;background:#000;"></div>
+            </div>
+            <div class="qr-row" style="justify-content:space-between;">
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:10px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+              <div class="qr-cell" style="width:6px;height:6px;background:#000;"></div>
+            </div>
+            <div class="qr-row">
+              <div class="qr-cell" style="width:18px;height:18px;background:#000;border-radius:2px;"></div>
+              <div style="flex:1;"></div>
+              <div class="qr-cell" style="width:6px;height:18px;background:#000;"></div>
+              <div style="width:2px;"></div>
+              <div class="qr-cell" style="width:10px;height:18px;background:#000;"></div>
+            </div>
+          </div>
+          <p style="font-size:7px;color:#666;margin-top:4px;font-family:'Courier New',monospace;letter-spacing:0.5px;"
+             th:text="${shortBookingId}">XXXXXXXX</p>
+        </div>
+      </div>
+    </div>
+    <!-- /ticket -->
+
+    <!-- Info strip -->
+    <div class="info-strip">
+      🎟 <strong>Show this email or booking ID at the counter.</strong><br/>
+      📍 <span th:text="${theaterName}">Theater</span>, <span th:text="${theaterAddress}">Address</span><br/>
+      ⏰ Doors open 30 minutes before showtime. Please arrive early.
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <hr class="divider"/>
+      <p>
+        Questions? Reply to this email or visit
+        <a href="#">bookmyseat.com/help</a><br/>
+        © 2026 BookMySeat. All rights reserved.
+      </p>
+      <p style="margin-top:8px;font-size:11px;">
+        You received this because you booked tickets on BookMySeat.<br/>
+        This is an automated message — please do not reply directly.
+      </p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Page, Movie } from './types';
 import { DEMO_MOVIES, PLACEHOLDER_POSTER, PLACEHOLDER_BACKDROP } from './data/mockData';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Nav } from './components/Nav';
 import { HomePage } from './pages/HomePage';
 import { ListingPage } from './pages/ListingPage';
@@ -11,11 +12,18 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { ConfirmationPage } from './pages/ConfirmationPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { HistoryPage } from './pages/HistoryPage';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
 
 // ─── Root App ─────────────────────────────────────────────────────────────────
-const MOVIES_API_URL = 'http://localhost:8080/api/v1/search/movies'
+const MOVIES_API_URL = `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'}/api/v1/search/movies`
 
-export default function App() {
+// Auth pages render full-screen without the main Nav
+const AUTH_PAGES: Page[] = ['login', 'signup', 'verify-email']
+
+function AppInner() {
   const [page, setPage] = useState<Page>('home')
   const [moviesList, setMoviesList] = useState<Movie[]>([])
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
@@ -23,6 +31,20 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [moviesError, setMoviesError] = useState<string | null>(null)
   const [moviesLoading, setMoviesLoading] = useState(true)
+  // Email shared between SignupPage/LoginPage → VerifyEmailPage
+  const [pendingEmail, setPendingEmail] = useState('')
+
+  // ── Booking state threaded through seats → checkout → confirmation ──────────
+  // bookingId: the PENDING booking created by POST /tentative
+  // expiresAt: ISO-8601 string (now + 8 min) driving the checkout countdown timer
+  // confirmedBookingId: the CONFIRMED bookingId passed to ConfirmationPage
+  const [bookingId, setBookingId] = useState<string | null>(null)
+  const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [confirmedBookingId, setConfirmedBookingId] = useState<string | null>(null)
+
+  const { isLoggedIn } = useAuth()
+
+  const PROTECTED_PAGES: Page[] = ['seats', 'food', 'checkout', 'confirmation', 'profile', 'history', 'admin']
 
   useEffect(() => {
     let cancelled = false
@@ -35,16 +57,11 @@ export default function App() {
       })
       .then((data: any) => {
         if (cancelled) return
-        // Some APIs wrap the array, e.g. { movies: [...] } or { content: [...] } —
-        // handle a plain array first, then fall back to common wrapper shapes.
         const rows: any[] = Array.isArray(data) ? data : (data?.movies ?? data?.content ?? [])
         if (!Array.isArray(rows) || rows.length === 0) {
           setMoviesError('The movies API returned no data.')
           return
         }
-        // Only map fields that actually exist on the `movies` table/response.
-        // Everything else (poster/backdrop) falls back to a generic placeholder
-        // until the backend serves real images.
         const backendMovies: Movie[] = rows.map((d) => ({
           id: d.id,
           title: d.title,
@@ -54,7 +71,7 @@ export default function App() {
           releaseDate: d.releaseDate ?? '',
           poster: d.posterUrl || PLACEHOLDER_POSTER,
           backdrop: d.backdropUrl || PLACEHOLDER_BACKDROP,
-          price: d.price ?? 0, // placeholder until show pricing exists
+          price: d.price ?? 0,
           featured: false,
         }))
         setMoviesList(backendMovies)
@@ -80,6 +97,11 @@ export default function App() {
     : moviesList
 
   const navigate = (p: Page) => {
+    if (PROTECTED_PAGES.includes(p) && !isLoggedIn) {
+      setPage('login')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
     setPage(p)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -89,6 +111,36 @@ export default function App() {
     navigate('details')
   }
 
+  // Called by SeatsPage when /tentative succeeds
+  const onTentativeBooked = (bId: string, expAt: string) => {
+    setBookingId(bId)
+    setExpiresAt(expAt)
+    navigate('checkout')
+  }
+
+  // Called by CheckoutPage when payment is CONFIRMED
+  const onPaymentConfirmed = (bId: string) => {
+    setConfirmedBookingId(bId)
+    navigate('confirmation')
+  }
+
+  // ── Auth pages: full-screen, no Nav ──────────────────────────────────────────
+  if (page === 'login') {
+    return <LoginPage setPage={navigate} onPendingEmail={setPendingEmail} />
+  }
+  if (page === 'signup') {
+    return <SignupPage setPage={navigate} onPendingEmail={setPendingEmail} />
+  }
+  if (page === 'verify-email') {
+    return <VerifyEmailPage setPage={navigate} pendingEmail={pendingEmail} />
+  }
+
+  // ── Protected pages guard: redirect to login if logged out ─────────────────
+  if (PROTECTED_PAGES.includes(page) && !isLoggedIn) {
+    return <LoginPage setPage={navigate} onPendingEmail={setPendingEmail} />
+  }
+
+  // ── Main app (with Nav) ───────────────────────────────────────────────────────
   return (
     <div style={{ background: '#07070f', minHeight: '100vh' }}>
       <Nav page={page} setPage={navigate} onSearch={setSearchQuery} />
@@ -110,16 +162,30 @@ export default function App() {
         <DetailsPage movie={selectedMovie} setPage={navigate} setSelectedShowId={setSelectedShowId} />
       )}
       {page === 'seats' && selectedMovie && selectedShowId && (
-        <SeatsPage movie={selectedMovie} setPage={navigate} showId={selectedShowId} />
+        <SeatsPage
+          movie={selectedMovie}
+          setPage={navigate}
+          showId={selectedShowId}
+          onTentativeBooked={onTentativeBooked}
+        />
       )}
       {page === 'food' && selectedMovie && (
         <FoodPage movie={selectedMovie} setPage={navigate} />
       )}
-      {page === 'checkout' && selectedMovie && (
-        <CheckoutPage movie={selectedMovie} setPage={navigate} />
+      {page === 'checkout' && selectedMovie && bookingId && expiresAt && (
+        <CheckoutPage
+          movie={selectedMovie}
+          setPage={navigate}
+          bookingId={bookingId}
+          expiresAt={expiresAt}
+          onPaymentConfirmed={onPaymentConfirmed}
+        />
       )}
-      {page === 'confirmation' && selectedMovie && (
-        <ConfirmationPage movie={selectedMovie} setPage={navigate} />
+      {page === 'confirmation' && confirmedBookingId && (
+        <ConfirmationPage
+          bookingId={confirmedBookingId}
+          setPage={navigate}
+        />
       )}
       {page === 'profile' && (
         <ProfilePage setPage={navigate} />
@@ -127,6 +193,17 @@ export default function App() {
       {page === 'history' && (
         <HistoryPage setPage={navigate} />
       )}
+      {page === 'admin' && (
+        <AdminDashboard setPage={navigate} />
+      )}
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
+    </AuthProvider>
   )
 }

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Page, Movie } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movie; setPage: (p: Page) => void; setSelectedShowId?: (id: string) => void }) {
   const [selectedCinema, setSelectedCinema] = useState<string>('')
   const [selectedTime, setSelectedTime] = useState('') // This will store the show ID
   const [selectedDate, setSelectedDate] = useState(0)
+  const { isLoggedIn } = useAuth()
 
   const [shows, setShows] = useState<any[]>([])
   const [showsError, setShowsError] = useState<string | null>(null)
@@ -193,7 +195,9 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
                 style={{ background: selectedTime ? 'linear-gradient(135deg, #d4a63a, #f0c060)' : 'rgba(255,255,255,0.08)', color: selectedTime ? '#07070f' : '#555570', cursor: selectedTime ? 'pointer' : 'default' }}
                 disabled={!selectedTime}
               >
-                {selectedTime ? 'Select Seats' : 'Choose a Showtime'}
+                {selectedTime 
+                  ? (isLoggedIn ? 'Select Seats' : 'Log in to Select Seats') 
+                  : 'Choose a Showtime'}
               </button>
             </div>
           </div>

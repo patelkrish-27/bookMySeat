@@ -6,6 +6,7 @@ import com.example.bookmyseat.enums.*;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -46,4 +47,9 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeat, UUID> {
             WHERE ss.show.id = :showId
             """)
     List<ShowSeatDto> getSeatLayout(UUID showId);
+
+    // ── Admin: delete all ShowSeats for a show (when deleting/modifying a show) ──
+    @Modifying
+    @Query("DELETE FROM ShowSeat ss WHERE ss.show.id = :showId")
+    void deleteAllByShow_Id(@Param("showId") UUID showId);
 }

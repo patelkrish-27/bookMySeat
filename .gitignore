@@ -1,0 +1,40 @@
+# ── Secrets — NEVER commit these ──────────────────────────────────────────────
+application.properties
+!application.properties.example
+.env
+.env.*
+!.env.example
+
+# ── Backend (Maven / Spring Boot) ─────────────────────────────────────────────
+backend/**/target/
+backend/**/.mvn/wrapper/maven-wrapper.jar
+backend/**/*.iws
+backend/**/*.iml
+backend/**/*.ipr
+backend/**/.idea/
+backend/**/.classpath
+backend/**/.project
+backend/**/.settings/
+backend/**/spring-shell.log
+*.log
+
+# ── Frontend (Node / Vite) ────────────────────────────────────────────────────
+fronted/node_modules/
+fronted/dist/
+fronted/.cache/
+fronted/.vite/
+fronted/vite.config.*.timestamp-*
+fronted/*.tsbuildinfo
+fronted/*-debug.log*
+
+# ── OS & editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+*.swp
+*.swo
+
+# ── AI / scratch files ─────────────────────────────────────────────────────────
+ai_files/
+.claude-replay.*
+.tmp-*

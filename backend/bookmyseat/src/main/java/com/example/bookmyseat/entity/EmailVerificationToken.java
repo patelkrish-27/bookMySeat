@@ -1,4 +1,4 @@
-package com.bookmyseat.entity;
+package com.example.bookmyseat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,12 +8,15 @@ import java.util.UUID;
 
 /**
  * Stores the OTP issued for email verification.
- * One active row per user; regenerated on resend (old one is deleted/overwritten).
+ * One active row per user; regenerated on resend (old one is deleted first).
  */
 @Entity
 @Table(name = "email_verification_tokens")
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmailVerificationToken {
 
     @Id
@@ -30,5 +33,5 @@ public class EmailVerificationToken {
     private Instant expiresAt;
 
     @Column(nullable = false)
-    private int attemptCount; // to rate-limit wrong OTP guesses
+    private int attemptCount; // rate-limits wrong OTP guesses
 }

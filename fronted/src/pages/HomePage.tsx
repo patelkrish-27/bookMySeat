@@ -112,24 +112,6 @@ export function HomePage({ movies, loading, setPage, setSelected }: {
           ))}
         </div>
       </div>
-
-      {/* Coming Soon Banner */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="relative rounded-2xl overflow-hidden p-10" style={{ background: 'linear-gradient(135deg, #13131f, #1a1a2e)', border: '1px solid rgba(212,166,58,0.15)' }}>
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full" style={{ background: 'radial-gradient(circle, rgba(212,166,58,0.08) 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
-          <div className="relative flex items-center justify-between">
-            <div>
-              <span className="text-xs font-mono-dm tracking-widest uppercase mb-3 block" style={{ color: '#d4a63a' }}>Coming Soon</span>
-              <h2 className="font-display font-bold text-3xl mb-2" style={{ color: '#f0f0f8' }}>Upcoming Blockbusters</h2>
-              <p className="text-sm" style={{ color: '#9999bb' }}>Pre-book your seats for the most anticipated films of 2025</p>
-            </div>
-            <button onClick={() => setPage('listing')} className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
-              style={{ background: 'rgba(212,166,58,0.15)', color: '#d4a63a', border: '1px solid rgba(212,166,58,0.3)' }}>
-              Explore Upcoming →
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

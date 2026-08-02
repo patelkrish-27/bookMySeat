@@ -9,9 +9,17 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:8443", "http://localhost:3000") // your frontend URL(s)
+                .allowedOrigins(
+                    "http://localhost:5173",  // Vite dev server (default)
+                    "http://localhost:3000",  // CRA / alternate dev port
+                    "http://localhost:4173",  // Vite preview
+                    "http://localhost:8443"   // any other local origin
+                )
+                // Auth uses Bearer tokens (Authorization header), NOT cookies.
+                // allowCredentials(true) is for cookie-based auth and conflicts
+                // with wildcard header rules — keep it false.
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(false);
     }
 }

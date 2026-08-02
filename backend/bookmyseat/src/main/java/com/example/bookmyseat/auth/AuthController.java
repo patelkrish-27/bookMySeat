@@ -1,6 +1,6 @@
-package com.bookmyseat.auth;
+package com.example.bookmyseat.auth;
 
-import com.bookmyseat.auth.AuthDtos.*;
+import com.example.bookmyseat.auth.AuthDtos.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

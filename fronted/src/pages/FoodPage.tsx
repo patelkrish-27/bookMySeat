@@ -52,7 +52,7 @@ export function FoodPage({ movie, setPage }: { movie: Movie; setPage: (p: Page) 
                     <h3 className="font-semibold mb-0.5 text-sm" style={{ color: '#f0f0f8' }}>{item.name}</h3>
                     <p className="text-xs mb-3 leading-relaxed" style={{ color: '#555570' }}>{item.desc}</p>
                     <div className="flex items-center justify-between">
-                      <span className="font-bold font-mono-dm" style={{ color: '#d4a63a' }}>${item.price}</span>
+                      <span className="font-bold font-mono-dm" style={{ color: '#d4a63a' }}>₹{item.price}</span>
                       {cart[item.id] ? (
                         <div className="flex items-center gap-3">
                           <button onClick={() => update(item.id, -1)} className="w-7 h-7 rounded-lg font-bold text-lg transition-colors hover:bg-yellow-400/10 flex items-center justify-center"
@@ -90,7 +90,7 @@ export function FoodPage({ movie, setPage }: { movie: Movie; setPage: (p: Page) 
                           <span className="w-5 h-5 rounded flex items-center justify-center text-xs font-mono-dm font-bold" style={{ background: 'rgba(212,166,58,0.15)', color: '#d4a63a' }}>{qty}</span>
                           <span className="text-sm" style={{ color: '#f0f0f8' }}>{item.name}</span>
                         </div>
-                        <span className="text-sm font-mono-dm" style={{ color: '#d4a63a' }}>${(item.price * qty).toFixed(2)}</span>
+                        <span className="text-sm font-mono-dm" style={{ color: '#d4a63a' }}>₹{(item.price * qty).toFixed(2)}</span>
                       </div>
                     )
                   })}
@@ -98,7 +98,7 @@ export function FoodPage({ movie, setPage }: { movie: Movie; setPage: (p: Page) 
               )}
               <div className="flex justify-between font-bold text-lg pt-4 mb-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <span style={{ color: '#f0f0f8' }}>Food Total</span>
-                <span style={{ color: '#d4a63a' }}>${total.toFixed(2)}</span>
+                <span style={{ color: '#d4a63a' }}>₹{total.toFixed(2)}</span>
               </div>
               <button onClick={() => setPage('checkout')}
                 className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-95 mb-3"

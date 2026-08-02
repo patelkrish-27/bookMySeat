@@ -1,9 +1,10 @@
-package com.bookmyseat.auth;
+package com.example.bookmyseat.auth;
 
-import com.bookmyseat.auth.AuthDtos.*;
-import com.bookmyseat.entity.EmailVerificationToken;
-import com.bookmyseat.entity.User; // adjust to your actual entity package
-import com.bookmyseat.repository.UserRepository; // adjust to your actual repository package
+import com.example.bookmyseat.auth.AuthDtos.*;
+import com.example.bookmyseat.entity.EmailVerificationToken;
+import com.example.bookmyseat.entity.User;
+import com.example.bookmyseat.repository.UserRepository;
+import com.example.bookmyseat.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -112,7 +113,7 @@ public class AuthenticationService {
 
     public AuthResponse login(LoginRequest request) {
         // Delegates credential checking to Spring Security's AuthenticationManager,
-        // which internally uses ApplicationConfig's UserDetailsService + PasswordEncoder.
+        // which internally uses SecurityConfig's UserDetailsService + PasswordEncoder.
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

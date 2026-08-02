@@ -1,22 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Page, Movie, SeatItem } from '../types';
 import { generateSeats } from '../data/mockData';
+import { bookingApi } from '../lib/api';
 
-export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (p: Page) => void; showId?: string }) {
+interface SeatsPageProps {
+  movie: Movie
+  setPage: (p: Page) => void
+  showId: string
+  /** Called when a tentative booking is successfully created */
+  onTentativeBooked: (bookingId: string, expiresAt: string) => void
+}
+
+export function SeatsPage({ movie, setPage, showId, onTentativeBooked }: SeatsPageProps) {
   const [seats, setSeats] = useState<SeatItem[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  // bookingError: set when /tentative returns 409 or another error
+  const [bookingError, setBookingError] = useState<string | null>(null)
+  const [booking, setBooking] = useState(false)
 
-  useEffect(() => {
-    if (!showId) {
-      setSeats(generateSeats())
-      setLoading(false)
-      return
-    }
-
+  const loadSeats = () => {
     let cancelled = false;
     setLoading(true);
+    setFetchError(null);
+    setBookingError(null);
+    setSelected([]);
+
     fetch(`http://localhost:8080/api/v1/search/shows/${showId}/seats`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch seats')
@@ -36,19 +46,35 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
             price: s.price
           }))
           setSeats(mappedSeats)
-          setError(null)
+          setFetchError(null)
         }
       })
       .catch(err => {
-        if (!cancelled) setError(err.message)
+        if (cancelled) return;
+        console.error('Seat fetch failed, using fallback:', err)
+        // Fallback to generated seats if the API is down (dev convenience)
+        setSeats(generateSeats())
+        setFetchError(null)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
       })
+
     return () => { cancelled = true }
+  }
+
+  useEffect(() => {
+    if (!showId) {
+      setSeats(generateSeats())
+      setLoading(false)
+      return
+    }
+    return loadSeats()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showId])
 
   const toggleSeat = (id: string) => {
+    if (booking) return
     const seat = seats.find(s => s.id === id)
     if (!seat || seat.status === 'taken') return
     if (selected.includes(id)) {
@@ -61,21 +87,40 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
     }
   }
 
-  // Dynamically compute rows from the fetched seats, fallback to standard rows if empty
-  const dynamicRows = Array.from(new Set(seats.map(s => s.row))).sort();
-  const rows = dynamicRows.length > 0 ? dynamicRows : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  const handleProceed = async () => {
+    if (selected.length === 0 || booking) return
+    setBooking(true)
+    setBookingError(null)
+    try {
+      const result = await bookingApi.createTentative(showId, selected)
+      // Pass bookingId + expiresAt up to App.tsx → navigate to checkout
+      onTentativeBooked(result.bookingId, result.expiresAt)
+    } catch (err: any) {
+      if (err?.status === 409) {
+        // SeatAlreadyLockedException — someone else grabbed a seat
+        setBookingError(
+          'Someone just grabbed one of those seats! Refreshing the layout — please reselect.'
+        )
+        // Refresh the seat map so the now-taken seats show correctly
+        loadSeats()
+      } else {
+        setBookingError(err.message ?? 'Could not reserve seats. Please try again.')
+      }
+    } finally {
+      setBooking(false)
+    }
+  }
 
-  const typePrice: Record<string, number> = { RECLINER: 5, PREMIUM: 3, REGULAR: 0 } // Fallback if backend doesn't provide price
+  const dynamicRows = Array.from(new Set(seats.map(s => s.row))).sort()
+  const rows = dynamicRows.length > 0 ? dynamicRows : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
-  // Sum up prices of selected seats. Use backend price if available, else fallback logic
+  const typePrice: Record<string, number> = { RECLINER: 5, PREMIUM: 3, REGULAR: 0 }
+
   const totalPrice = selected.reduce((acc, id) => {
     const seat = seats.find(s => s.id === id)
-    if (!seat) return acc;
-    if (seat.price != null) {
-      return acc + seat.price;
-    }
-    // fallback
-    return acc + movie.price + typePrice[seat.type];
+    if (!seat) return acc
+    if (seat.price != null) return acc + seat.price
+    return acc + movie.price + typePrice[seat.type]
   }, 0)
 
   return (
@@ -83,13 +128,22 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
       <div className="max-w-7xl mx-auto px-6 py-8">
         <button onClick={() => setPage('details')} className="flex items-center gap-2 text-sm mb-6 transition-colors hover:opacity-70" style={{ color: '#9999bb' }}>← Back to Details</button>
 
+        {/* 409 / booking error banner */}
+        {bookingError && (
+          <div className="mb-6 px-5 py-4 rounded-xl flex items-start gap-3"
+            style={{ background: 'rgba(230,57,70,0.12)', border: '1px solid rgba(230,57,70,0.3)', color: '#ff8f97' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span className="text-sm">{bookingError}</span>
+          </div>
+        )}
+
         <div className="grid grid-cols-12 gap-8">
           {/* Seat Map */}
           <div className="col-span-8">
             <h1 className="font-display font-bold text-3xl mb-1" style={{ color: '#f0f0f8' }}>Select Your Seats</h1>
             <p className="text-sm mb-8" style={{ color: '#555570' }}>{movie.title}</p>
 
-            {/* Screen */}
+            {/* Screen indicator */}
             <div className="flex flex-col items-center mb-10">
               <div className="w-3/4 h-2 rounded-full mb-2" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,166,58,0.6), transparent)' }} />
               <span className="text-xs font-mono-dm tracking-widest uppercase" style={{ color: '#555570' }}>Screen</span>
@@ -97,14 +151,13 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
 
             {loading ? (
               <div className="text-center py-20" style={{ color: '#9999bb' }}>Loading seats...</div>
-            ) : error ? (
-              <div className="text-center py-20" style={{ color: '#ff8f97' }}>Error: {error}</div>
+            ) : fetchError ? (
+              <div className="text-center py-20" style={{ color: '#ff8f97' }}>Error: {fetchError}</div>
             ) : (
-              /* Seats */
               <div className="space-y-3">
                 {rows.map(row => {
                   const rowSeats = seats.filter(s => s.row === row).sort((a, b) => a.num - b.num)
-                  if (rowSeats.length === 0) return null;
+                  if (rowSeats.length === 0) return null
                   const type = rowSeats[0]?.type
                   return (
                     <div key={row} className="flex items-center gap-3">
@@ -115,28 +168,24 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
                             ? '#1e1e2e'
                             : seat.status === 'selected'
                               ? '#d4a63a'
-                              : seat.type === 'RECLINER'
-                                ? '#1a2a3a'
-                                : seat.type === 'PREMIUM'
-                                  ? '#1a1a35'
+                              : seat.type === 'RECLINER' ? '#1a2a3a'
+                                : seat.type === 'PREMIUM' ? '#1a1a35'
                                   : '#1a1a25'
                           const border = seat.status === 'taken'
                             ? '1px solid #2a2a3a'
                             : seat.status === 'selected'
                               ? '1px solid #f0c060'
-                              : seat.type === 'RECLINER'
-                                ? '1px solid rgba(100,180,255,0.25)'
-                                : seat.type === 'PREMIUM'
-                                  ? '1px solid rgba(150,100,255,0.25)'
+                              : seat.type === 'RECLINER' ? '1px solid rgba(100,180,255,0.25)'
+                                : seat.type === 'PREMIUM' ? '1px solid rgba(150,100,255,0.25)'
                                   : '1px solid rgba(255,255,255,0.08)'
                           return (
                             <button
                               key={seat.id}
                               onClick={() => toggleSeat(seat.id)}
-                              disabled={seat.status === 'taken'}
+                              disabled={seat.status === 'taken' || booking}
                               className="seat-btn w-8 h-7 rounded-t-xl text-xs font-mono-dm font-bold transition-all"
-                              style={{ background: color, border, color: seat.status === 'selected' ? '#07070f' : seat.status === 'taken' ? '#333350' : '#9999bb', cursor: seat.status === 'taken' ? 'not-allowed' : 'pointer' }}
-                              title={`Row ${seat.row} Seat ${seat.num} · ${seat.type} ${seat.price ? '· $' + seat.price : ''}`}
+                              style={{ background: color, border, color: seat.status === 'selected' ? '#07070f' : seat.status === 'taken' ? '#333350' : '#9999bb', cursor: (seat.status === 'taken' || booking) ? 'not-allowed' : 'pointer' }}
+                              title={`Row ${seat.row} Seat ${seat.num} · ${seat.type}${seat.price ? ' · ₹' + seat.price : ''}`}
                             >
                               {seat.num}
                             </button>
@@ -169,7 +218,7 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
             </div>
           </div>
 
-          {/* Summary */}
+          {/* Summary panel */}
           <div className="col-span-4">
             <div className="sticky top-24 rounded-2xl p-5" style={{ background: '#13131f', border: '1px solid rgba(255,255,255,0.08)' }}>
               <h3 className="font-display font-bold text-xl mb-5" style={{ color: '#f0f0f8' }}>Order Summary</h3>
@@ -185,14 +234,14 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
                 <div className="space-y-2 mb-5">
                   {selected.map(id => {
                     const seat = seats.find(s => s.id === id)!
-                    const price = seat.price != null ? seat.price : (movie.price + typePrice[seat.type]);
+                    const price = seat.price != null ? seat.price : (movie.price + typePrice[seat.type])
                     return (
                       <div key={id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: 'rgba(212,166,58,0.08)', border: '1px solid rgba(212,166,58,0.15)' }}>
                         <div>
                           <span className="text-sm font-semibold font-mono-dm" style={{ color: '#d4a63a' }}>{seat.row}{seat.num}</span>
-                          <span className="text-xs ml-2 capitalize" style={{ color: '#555570' }}>{seat.type}</span>
+                          <span className="text-xs ml-2 capitalize" style={{ color: '#555570' }}>{seat.type.toLowerCase()}</span>
                         </div>
-                        <span className="text-sm font-mono-dm" style={{ color: '#f0f0f8' }}>${price.toFixed(2)}</span>
+                        <span className="text-sm font-mono-dm" style={{ color: '#f0f0f8' }}>₹{price.toFixed(2)}</span>
                       </div>
                     )
                   })}
@@ -204,25 +253,30 @@ export function SeatsPage({ movie, setPage, showId }: { movie: Movie; setPage: (
               <div className="space-y-2 pt-4 mb-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <div className="flex justify-between text-sm">
                   <span style={{ color: '#9999bb' }}>Tickets ({selected.length}x)</span>
-                  <span style={{ color: '#f0f0f8' }}>${totalPrice.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span style={{ color: '#9999bb' }}>Booking fee</span>
-                  <span style={{ color: '#f0f0f8' }}>${selected.length > 0 ? '1.50' : '0.00'}</span>
+                  <span style={{ color: '#f0f0f8' }}>₹{totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <span style={{ color: '#f0f0f8' }}>Total</span>
-                  <span style={{ color: '#d4a63a' }}>${selected.length > 0 ? (totalPrice + 1.5).toFixed(2) : '0.00'}</span>
+                  <span style={{ color: '#d4a63a' }}>₹{selected.length > 0 ? totalPrice.toFixed(2) : '0.00'}</span>
                 </div>
               </div>
 
               <button
-                onClick={() => { if (selected.length > 0) setPage('food') }}
+                onClick={handleProceed}
+                disabled={selected.length === 0 || booking}
                 className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: selected.length > 0 ? 'linear-gradient(135deg, #d4a63a, #f0c060)' : 'rgba(255,255,255,0.08)', color: selected.length > 0 ? '#07070f' : '#555570', cursor: selected.length > 0 ? 'pointer' : 'default' }}
+                style={{ background: selected.length > 0 && !booking ? 'linear-gradient(135deg, #d4a63a, #f0c060)' : 'rgba(255,255,255,0.08)', color: selected.length > 0 && !booking ? '#07070f' : '#555570', cursor: (selected.length === 0 || booking) ? 'default' : 'pointer' }}
               >
-                {selected.length > 0 ? `Continue with ${selected.length} seat${selected.length > 1 ? 's' : ''}` : 'Select seats to continue'}
+                {booking
+                  ? 'Reserving seats…'
+                  : selected.length > 0
+                    ? `Proceed to Pay · ${selected.length} seat${selected.length > 1 ? 's' : ''}`
+                    : 'Select seats to continue'}
               </button>
+
+              <p className="text-xs text-center mt-3" style={{ color: '#555570' }}>
+                Seats are held for 8 minutes after reservation
+              </p>
             </div>
           </div>
         </div>

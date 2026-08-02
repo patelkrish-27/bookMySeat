@@ -65,7 +65,7 @@ export function ListingPage({ movies, setPage, setSelected }: {
                   </p>
                 </div>
                 <div className="flex flex-col items-end justify-between flex-shrink-0">
-                  <span className="font-mono-dm font-bold text-lg" style={{ color: '#d4a63a' }}>${m.price}</span>
+                  <span className="font-mono-dm font-bold text-lg" style={{ color: '#d4a63a' }}>₹{m.price}</span>
                   <button className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90"
                     style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}>
                     Book Now

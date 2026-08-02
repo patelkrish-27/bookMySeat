@@ -2,6 +2,8 @@ package com.example.bookmyseat.dto;
 
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -12,6 +14,7 @@ public class MovieDto {
     private String description;
     private Integer durationMins;
     private String language;
+    private LocalDate releaseDate;
     private String posterUrl;
     private String backdropUrl;
 }

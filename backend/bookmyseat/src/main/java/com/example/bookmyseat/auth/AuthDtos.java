@@ -1,4 +1,4 @@
-package com.bookmyseat.auth;
+package com.example.bookmyseat.auth;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +13,7 @@ public class AuthDtos {
         private String email;
         private String password;
         // role is intentionally NOT accepted from the client for normal signup;
-        // default to a fixed role (e.g. "USER") in the service layer to prevent privilege escalation.
+        // default to a fixed role ("USER") in the service layer to prevent privilege escalation.
     }
 
     @Getter

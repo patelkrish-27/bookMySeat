@@ -1,6 +1,6 @@
-package com.bookmyseat.repository;
+package com.example.bookmyseat.auth;
 
-import com.bookmyseat.entity.EmailVerificationToken;
+import com.example.bookmyseat.entity.EmailVerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

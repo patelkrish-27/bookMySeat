@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><!-- figma:title --></title>
     <!-- figma:head-end -->
+
+    <!--
+      Razorpay Checkout script — loaded once globally so window.Razorpay is
+      available before the Pay Now button is ever clicked.
+      See: https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/
+    -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body>
     <!-- figma:body-start -->

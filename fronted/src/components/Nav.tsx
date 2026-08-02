@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Page, Movie, SeatItem, FoodItem } from '../types';
-import { DEMO_MOVIES, FOOD_ITEMS, SHOWTIMES, PLACEHOLDER_POSTER, PLACEHOLDER_BACKDROP, generateSeats } from '../data/mockData';
+import { useState } from 'react';
+import { Page } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export function Nav({ page, setPage, onSearch }: {
   page: Page
@@ -11,11 +11,19 @@ export function Nav({ page, setPage, onSearch }: {
   const [search, setSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
 
+  const { isLoggedIn, user, logout, isAdmin } = useAuth()
+
   const navItems: { label: string; page: Page }[] = [
     { label: 'Movies', page: 'listing' },
+    ...(isAdmin ? [{ label: 'Admin', page: 'admin' as Page }] : []),
     { label: 'Profile', page: 'profile' },
     { label: 'History', page: 'history' },
   ]
+
+  function handleLogout() {
+    logout()
+    setPage('home')
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', background: 'rgba(7,7,15,0.92)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
@@ -72,10 +80,51 @@ export function Nav({ page, setPage, onSearch }: {
             </button>
           </div>
 
-          {/* Avatar */}
-          <button onClick={() => setPage('profile')} className="w-9 h-9 rounded-full overflow-hidden border-2 hover:border-yellow-400 transition-colors" style={{ borderColor: 'rgba(212,166,58,0.4)' }}>
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&auto=format" alt="User" className="w-full h-full object-cover" />
-          </button>
+          {/* Auth controls */}
+          {isLoggedIn && user ? (
+            <div className="flex items-center gap-3">
+              {/* Username pill */}
+              <button
+                onClick={() => setPage('profile')}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
+              >
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium" style={{ color: '#f0f0f8' }}>
+                  {user.name.split(' ')[0]}
+                </span>
+              </button>
+              {/* Logout */}
+              <button
+                onClick={handleLogout}
+                className="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
+                style={{ color: '#9999bb' }}
+              >
+                Log out
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage('login')}
+                className="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
+                style={{ color: '#9999bb' }}
+              >
+                Log in
+              </button>
+              <button
+                onClick={() => setPage('signup')}
+                className="text-sm font-semibold px-4 py-1.5 rounded-lg transition-opacity hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}
+              >
+                Sign up
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

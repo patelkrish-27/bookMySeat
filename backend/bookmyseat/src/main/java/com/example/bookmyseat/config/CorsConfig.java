@@ -13,7 +13,9 @@ public class CorsConfig implements WebMvcConfigurer {
                     "http://localhost:5173",  // Vite dev server (default)
                     "http://localhost:3000",  // CRA / alternate dev port
                     "http://localhost:4173",  // Vite preview
-                    "http://localhost:8443"   // any other local origin
+                    "http://localhost:8443",  // any other local origin
+                    "https://bookmyseat-krabe2lh5-patelkrish-27s-projects.vercel.app", // Vercel deployment 1
+                    "https://bookmyseat-flax.vercel.app" // Vercel deployment 2
                 )
                 // Auth uses Bearer tokens (Authorization header), NOT cookies.
                 // allowCredentials(true) is for cookie-based auth and conflicts

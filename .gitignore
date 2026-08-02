@@ -1,5 +1,5 @@
 # ── Secrets — NEVER commit these ──────────────────────────────────────────────
-application.properties
+# application.properties is now tracked (contains placeholders). Use application-dev.properties for secrets.
 !application.properties.example
 .env
 .env.*

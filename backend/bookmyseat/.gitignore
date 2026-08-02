@@ -4,8 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Ignore application.properties (contains local secrets)
-**/application.properties
+# Ignore dev properties (contains local secrets)
+**/application-dev.properties
 
 ### STS ###
 .apt_generated

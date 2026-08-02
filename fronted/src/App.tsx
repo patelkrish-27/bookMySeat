@@ -18,7 +18,7 @@ import { SignupPage } from './pages/SignupPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 
 // ─── Root App ─────────────────────────────────────────────────────────────────
-const MOVIES_API_URL = `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'}/api/v1/search/movies`
+const MOVIES_API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1/search/movies`
 
 // Auth pages render full-screen without the main Nav
 const AUTH_PAGES: Page[] = ['login', 'signup', 'verify-email']

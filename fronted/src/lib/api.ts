@@ -22,7 +22,7 @@ import type {
   SeatMapEntry,
 } from '../types'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 const STORAGE_KEY = 'bms_auth'
 
 function getToken(): string | null {

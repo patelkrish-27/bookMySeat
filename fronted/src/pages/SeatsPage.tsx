@@ -27,7 +27,7 @@ export function SeatsPage({ movie, setPage, showId, onTentativeBooked }: SeatsPa
     setBookingError(null);
     setSelected([]);
 
-    const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
     fetch(`${baseUrl}/api/v1/search/shows/${showId}/seats`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch seats')

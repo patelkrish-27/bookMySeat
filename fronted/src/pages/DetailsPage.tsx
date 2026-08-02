@@ -13,7 +13,8 @@ export function DetailsPage({ movie, setPage, setSelectedShowId }: { movie: Movi
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`http://localhost:8080/api/v1/search/movies/${movie.id}/shows`)
+    const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+    fetch(`${baseUrl}/api/v1/search/movies/${movie.id}/shows`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch shows')
         return res.json()

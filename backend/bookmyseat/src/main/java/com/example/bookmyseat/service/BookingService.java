@@ -97,7 +97,7 @@ public class BookingService {
                 .build();
         booking = bookingRepository.save(booking);
 
-        LocalDateTime expiresAt = LocalDateTime.now().plus(LOCK_TTL);
+        Instant expiresAt = Instant.now().plus(LOCK_TTL);
 
         return TentativeBookingResponse.builder()
                 .bookingId(booking.getId())

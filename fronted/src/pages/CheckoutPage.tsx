@@ -37,7 +37,14 @@ export function CheckoutPage({
 
   // Countdown — initialise from expiresAt so page refreshes don't reset the timer
   const [secondsLeft, setSecondsLeft] = useState(() => {
-    const diff = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+    if (!expiresAt) return 480
+    let iso = expiresAt
+    // If backend sent ISO timestamp without timezone designator, append 'Z' to parse as UTC
+    if (!iso.endsWith('Z') && !iso.includes('+') && !iso.match(/-\d{2}:\d{2}$/)) {
+      iso += 'Z'
+    }
+    const targetMs = new Date(iso).getTime()
+    const diff = isNaN(targetMs) ? 480 : Math.floor((targetMs - Date.now()) / 1000)
     return Math.max(0, diff)
   })
 

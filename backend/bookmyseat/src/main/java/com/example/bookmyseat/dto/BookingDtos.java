@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class BookingDtos {
          * If the booking isn't paid by this time the Redis locks expire and
          * the seats return to AVAILABLE automatically.
          */
-        private LocalDateTime expiresAt;
+        private Instant expiresAt;
     }
 
     // ── GET /{bookingId} — full booking detail ────────────────────────────────

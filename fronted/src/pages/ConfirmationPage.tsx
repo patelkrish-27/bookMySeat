@@ -41,19 +41,21 @@ export function ConfirmationPage({ bookingId, setPage }: ConfirmationPageProps) 
 
   if (loading) {
     return (
-      <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: '#07070f' }}>
-        <div className="text-center" style={{ color: '#9999bb' }}>Loading your booking…</div>
+      <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: 'transparent' }}>
+        <div className="text-center flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-2 border-t-transparent spin-slow" style={{ borderColor: 'rgba(212,166,58,0.3)', borderTopColor: 'transparent' }} />
+          <span style={{ color: '#9999bb' }}>Loading your booking…</span>
+        </div>
       </div>
     )
   }
 
   if (error || !booking) {
     return (
-      <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: '#07070f' }}>
-        <div className="text-center max-w-sm">
+      <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: 'transparent' }}>
+        <div className="text-center max-w-sm mx-4">
           <p className="mb-4" style={{ color: '#ff8f97' }}>{error ?? 'Booking not found.'}</p>
-          <button onClick={() => setPage('home')} className="px-6 py-3 rounded-xl font-semibold"
-            style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}>
+          <button onClick={() => setPage('home')} className="px-6 py-3 rounded-xl font-semibold glass-btn-gold">
             Back to Home
           </button>
         </div>
@@ -71,27 +73,27 @@ export function ConfirmationPage({ bookingId, setPage }: ConfirmationPageProps) 
   const shortId = bookingId.slice(-8).toUpperCase()
 
   return (
-    <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: '#07070f' }}>
-      <div className="max-w-md w-full mx-6">
+    <div className="page-fade min-h-screen pt-20 flex items-center justify-center" style={{ background: 'transparent' }}>
+      <div className="max-w-md w-full mx-4 sm:mx-6">
         {/* Success header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, rgba(212,166,58,0.2), rgba(240,192,96,0.1))', border: '2px solid rgba(212,166,58,0.4)' }}>
+          <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center scale-in glass-panel glow-pulse"
+            style={{ background: 'rgba(212,166,58,0.08)', borderColor: 'rgba(212,166,58,0.3)' }}>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d4a63a" strokeWidth="2.5">
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </div>
-          <h1 className="font-display font-black text-3xl mb-2" style={{ color: '#f0f0f8' }}>Booking Confirmed!</h1>
+          <h1 className="font-display font-black text-2xl sm:text-3xl mb-2" style={{ color: '#f0f0f8' }}>Booking Confirmed!</h1>
           <p style={{ color: '#9999bb' }}>Your tickets have been booked. Enjoy the show!</p>
         </div>
 
         {/* Ticket */}
-        <div className="rounded-2xl overflow-hidden" style={{ background: '#13131f', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="glass-panel rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(212,166,58,0.06)' }}>
           {/* Top */}
-          <div className="p-6 relative" style={{ background: 'linear-gradient(135deg, #1a1a2e, #13131f)' }}>
+          <div className="p-5 sm:p-6 relative" style={{ background: 'linear-gradient(135deg, rgba(26,26,46,0.8), rgba(19,19,31,0.8))' }}>
             {booking.posterUrl && (
               <div className="absolute top-4 right-4">
-                <div className="w-16 h-16 rounded-xl overflow-hidden border" style={{ borderColor: 'rgba(212,166,58,0.2)' }}>
+                <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-xl overflow-hidden border" style={{ borderColor: 'rgba(212,166,58,0.2)' }}>
                   <img src={booking.posterUrl} alt={booking.movieTitle} className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -100,7 +102,7 @@ export function ConfirmationPage({ bookingId, setPage }: ConfirmationPageProps) 
               <span className="text-xs font-mono-dm tracking-widest" style={{ color: '#d4a63a' }}>BOOKING ID</span>
               <p className="font-mono-dm font-bold text-lg" style={{ color: '#f0f0f8' }}>#BMS-{shortId}</p>
             </div>
-            <h2 className="font-display font-bold text-xl mb-4 pr-20" style={{ color: '#f0f0f8' }}>{booking.movieTitle}</h2>
+            <h2 className="font-display font-bold text-lg sm:text-xl mb-4 pr-16 sm:pr-20" style={{ color: '#f0f0f8' }}>{booking.movieTitle}</h2>
             <div className="grid grid-cols-2 gap-3">
               {([
                 ['Cinema', booking.theaterName],
@@ -121,21 +123,21 @@ export function ConfirmationPage({ bookingId, setPage }: ConfirmationPageProps) 
           {/* Tear line */}
           <div className="flex items-center px-4">
             <div className="w-5 h-5 rounded-full -ml-6 flex-shrink-0" style={{ background: '#07070f' }} />
-            <div className="flex-1 border-t-2 border-dashed mx-2" style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+            <div className="flex-1 border-t-2 border-dashed mx-2" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
             <div className="w-5 h-5 rounded-full -mr-6 flex-shrink-0" style={{ background: '#07070f' }} />
           </div>
 
           {/* Bottom: amount + QR */}
-          <div className="p-6 flex items-center justify-between">
+          <div className="p-5 sm:p-6 flex items-center justify-between">
             <div>
               <p className="text-xs font-mono-dm mb-1" style={{ color: '#555570' }}>Amount Paid</p>
               <p className="font-mono-dm font-bold text-2xl" style={{ color: '#d4a63a' }}>
                 ₹{Number(booking.totalAmount).toFixed(2)}
               </p>
-              <p className="text-xs mt-1 font-mono-dm" style={{ color: '#4ade80' }}>{booking.status}</p>
+              <p className="text-xs mt-1 font-mono-dm glass-pill px-2 py-0.5 rounded-full inline-block" style={{ color: '#4ade80', borderColor: 'rgba(100,200,100,0.2)' }}>{booking.status}</p>
             </div>
             {/* QR placeholder — replace inner content with <QRCodeSVG> once package is installed */}
-            <div className="w-20 h-20 rounded-xl overflow-hidden flex items-center justify-center"
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex items-center justify-center"
               style={{ background: 'white', padding: 4 }}>
               <QrPlaceholder id={bookingId} />
             </div>
@@ -144,13 +146,12 @@ export function ConfirmationPage({ bookingId, setPage }: ConfirmationPageProps) 
 
         <div className="flex gap-3 mt-5">
           <button onClick={() => setPage('history')}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-            style={{ background: 'rgba(212,166,58,0.1)', color: '#d4a63a', border: '1px solid rgba(212,166,58,0.25)' }}>
+            className="flex-1 py-3 rounded-xl text-sm font-semibold glass-btn-outline"
+            style={{ color: '#d4a63a', borderColor: 'rgba(212,166,58,0.2)' }}>
             View in History
           </button>
           <button onClick={() => setPage('home')}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #d4a63a, #f0c060)', color: '#07070f' }}>
+            className="flex-1 py-3 rounded-xl text-sm font-semibold glass-btn-gold">
             Back to Home
           </button>
         </div>

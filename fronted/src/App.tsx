@@ -142,7 +142,15 @@ function AppInner() {
 
   // ── Main app (with Nav) ───────────────────────────────────────────────────────
   return (
-    <div style={{ background: '#07070f', minHeight: '100vh' }}>
+    <div style={{ background: '#07070f', minHeight: '100vh' }} className="relative overflow-x-hidden">
+      {/* Aurora animated gradient background for glassmorphism */}
+      <div className="aurora-bg" />
+      {/* Decorative floating glass orbs */}
+      <div className="glass-orb glass-orb-gold" style={{ width: 500, height: 500, top: '10%', left: '-5%' }} />
+      <div className="glass-orb glass-orb-blue" style={{ width: 400, height: 400, top: '50%', right: '-8%', animationDelay: '-5s' }} />
+      <div className="glass-orb glass-orb-crimson" style={{ width: 350, height: 350, bottom: '10%', left: '30%', animationDelay: '-10s' }} />
+
+      <div className="relative" style={{ zIndex: 1 }}>
       <Nav page={page} setPage={navigate} onSearch={setSearchQuery} />
 
       {moviesError && (
@@ -196,6 +204,7 @@ function AppInner() {
       {page === 'admin' && (
         <AdminDashboard setPage={navigate} />
       )}
+      </div>
     </div>
   )
 }

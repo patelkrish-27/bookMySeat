@@ -37,21 +37,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255,255,255,0.02);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 166, 58, 0.3);
-  border-radius: 2px;
+  background: rgba(212, 166, 58, 0.2);
+  border-radius: 3px;
+  backdrop-filter: blur(4px);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 166, 58, 0.6);
+  background: rgba(212, 166, 58, 0.45);
 }
 
+/* ─── Font Helpers ──────────────────────────────────────────────────────────── */
 .font-display {
   font-family: 'Playfair Display', Georgia, serif;
 }
@@ -60,19 +63,193 @@ body {
   font-family: 'DM Mono', monospace;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLASSMORPHISM SYSTEM — per SKILL.md
+   Rules:
+   1. backdrop-blur required — no flat backgrounds
+   2. Semi-transparent bg — bg-white/10, bg-black/40
+   3. Subtle borders — border-white/20
+   4. Shadow for depth — shadow-xl shadow-primary/10
+   5. Dark mode variant — always define both
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Base Glass (light overlay) ─────────────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* ── Glass Card — primary surface for cards ─────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(212, 166, 58, 0.15);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 166, 58, 0.06);
+}
+
+/* ── Glass Panel — panels, sidebars, summary boxes ──────────────────────────── */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── Glass Nav — fixed navigation bar ───────────────────────────────────────── */
+.glass-nav {
+  background: rgba(7, 7, 15, 0.65);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Glass Dark — darker glass, for overlays ────────────────────────────────── */
 .glass-dark {
   background: rgba(7, 7, 15, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
+
+/* ── Glass Input — form inputs ──────────────────────────────────────────────── */
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0f0f8;
+  transition: all 0.25s ease;
+}
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(212, 166, 58, 0.5);
+  box-shadow: 0 0 20px rgba(212, 166, 58, 0.08), 0 0 0 3px rgba(212, 166, 58, 0.06);
+  outline: none;
+}
+.glass-input::placeholder {
+  color: rgba(153, 153, 187, 0.5);
+}
+
+/* ── Glass Modal — floating dialogs/modals ──────────────────────────────────── */
+.glass-modal {
+  background: rgba(19, 19, 31, 0.85);
+  backdrop-filter: blur(40px) saturate(1.4);
+  -webkit-backdrop-filter: blur(40px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ── Glass Pill — small tags, badges ────────────────────────────────────────── */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ── Glass Button (primary CTA, gold) ───────────────────────────────────────── */
+.glass-btn-gold {
+  background: linear-gradient(135deg, #d4a63a, #f0c060);
+  color: #07070f;
+  border: none;
+  box-shadow: 0 4px 24px rgba(212, 166, 58, 0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: all 0.25s ease;
+}
+.glass-btn-gold:hover {
+  box-shadow: 0 8px 32px rgba(212, 166, 58, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+.glass-btn-gold:active {
+  transform: scale(0.97);
+}
+
+/* ── Glass Button (secondary, outline) ──────────────────────────────────────── */
+.glass-btn-outline {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f0f0f8;
+  transition: all 0.25s ease;
+}
+.glass-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(212, 166, 58, 0.2);
+  box-shadow: 0 4px 16px rgba(212, 166, 58, 0.06);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ANIMATED BACKGROUND — aurora gradient for glass to blur against
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(ellipse at 20% 50%, rgba(212, 166, 58, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(100, 120, 255, 0.05) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(230, 57, 70, 0.04) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 60%, rgba(150, 100, 255, 0.04) 0%, transparent 50%);
+  animation: auroraShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes auroraShift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-3%, 2%) rotate(2deg); }
+  66% { transform: translate(2%, -2%) rotate(-1deg); }
+  100% { transform: translate(-1%, 1%) rotate(1deg); }
+}
+
+/* ── Decorative floating orbs ───────────────────────────────────────────────── */
+.glass-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: orbFloat 15s ease-in-out infinite alternate;
+}
+.glass-orb-gold {
+  background: radial-gradient(circle, rgba(212, 166, 58, 0.15) 0%, transparent 70%);
+}
+.glass-orb-blue {
+  background: radial-gradient(circle, rgba(100, 120, 255, 0.1) 0%, transparent 70%);
+}
+.glass-orb-crimson {
+  background: radial-gradient(circle, rgba(230, 57, 70, 0.08) 0%, transparent 70%);
+}
+
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -30px) scale(1.1); }
+  100% { transform: translate(-10px, 20px) scale(0.95); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GRADIENTS & TEXT
+   ═══════════════════════════════════════════════════════════════════════════════ */
 
 .gold-gradient {
   background: linear-gradient(135deg, #d4a63a 0%, #f0c060 50%, #d4a63a 100%);
@@ -85,13 +262,18 @@ body {
   background-clip: text;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CARD & INTERACTIVE EFFECTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 .movie-card-hover {
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s ease,
+              border-color 0.4s ease;
 }
 .movie-card-hover:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 166, 58, 0.2);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(212, 166, 58, 0.08), 0 0 0 1px rgba(212, 166, 58, 0.15);
 }
 
 .seat-btn {
@@ -101,17 +283,40 @@ body {
   transform: scale(1.15);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MICRO-ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 .page-fade {
-  animation: pageFade 0.35s ease;
+  animation: pageFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes pageFade {
-  from { opacity: 0; transform: translateY(12px); }
+@keyframes pageFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Staggered fade-up for lists/grids */
+.fade-up {
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Glow pulse — for active/selected states */
+.glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  from { box-shadow: 0 0 20px rgba(212, 166, 58, 0.1); }
+  to   { box-shadow: 0 0 30px rgba(212, 166, 58, 0.2); }
+}
+
+/* Shimmer loading state */
 .shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
@@ -120,6 +325,37 @@ body {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* Float — gentle floating for decorative elements */
+.animate-float {
+  animation: float 6s ease-in-out infinite alternate;
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-12px); }
+}
+
+/* Spin slow — for loading icons */
+.spin-slow {
+  animation: spin 3s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Scale in — for success checkmarks etc */
+.scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   NAV & LINKS
+   ═══════════════════════════════════════════════════════════════════════════════ */
 
 .nav-link {
   position: relative;
@@ -131,14 +367,19 @@ body {
   bottom: -2px;
   left: 0;
   width: 0;
-  height: 1px;
-  background: #d4a63a;
-  transition: width 0.25s ease;
+  height: 2px;
+  background: linear-gradient(90deg, #d4a63a, #f0c060);
+  border-radius: 1px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   HERO & LAYOUT
+   ═══════════════════════════════════════════════════════════════════════════════ */
 
 .hero-gradient {
   background: linear-gradient(
@@ -159,4 +400,58 @@ input[type="checkbox"] { accent-color: #d4a63a; }
 .ticket-dotted {
   border-style: dashed;
   border-color: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE MENU OVERLAY
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 100;
+  background: rgba(13, 13, 25, 0.92);
+  backdrop-filter: blur(40px) saturate(1.6);
+  -webkit-backdrop-filter: blur(40px) saturate(1.6);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+.mobile-menu-drawer.open {
+  transform: translateX(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE UTILITIES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Hide on mobile, show on md+ */
+@media (max-width: 767px) {
+  .hide-mobile { display: none !important; }
+}
+
+/* Hide on desktop, show on mobile */
+@media (min-width: 768px) {
+  .hide-desktop { display: none !important; }
 }
